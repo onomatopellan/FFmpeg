@@ -3065,7 +3065,7 @@ static void GetSubtitlePreroll_compliant(MatroskaFile *mf, ulonglong timecode, s
   for (int i = NextPESubtitleIdx(mf, timecode, 0); i != -1; i = NextPESubtitleIdx(mf, timecode, i+1)) {
     cue = mf->Cues[i];
 
-    // skip to next cue if we went to read same block as previuos
+    // skip to next cue if we went to read same block as previous
     if (cue.Position == positionPrev && cue.RelativePosition == relativePositionPrev)
       continue;
 
@@ -3078,8 +3078,10 @@ static void GetSubtitlePreroll_compliant(MatroskaFile *mf, ulonglong timecode, s
       qe->End = qe->Start + cue.Duration;
       QPut(&subPreQueues[trackIndex], qe);
     }
+
     positionPrev = cue.Position;
     relativePositionPrev = cue.RelativePosition;
+
   }
 }
 
