@@ -3321,18 +3321,18 @@ void  mkv_Seek(MatroskaFile *mf,ulonglong timecode,unsigned flags) {
   i = 0;
   j = mf->nCues - 1;
 
+  // get pre-existing subtitles that should be displayed at timecode
+  subPreQueues = QsStructAlloc(mf);
+  GetSubtitlePreroll_compliant(mf, timecode, subPreQueues);
+
   for (;;) {
     if (i>j) {
       j = j>=0 ? j : 0;
 
       if (setjmp(mf->jb)!=0)
-        return;
+        goto dealloc;
 
       mkv_SetTrackMask(mf,mf->trackMask);
-
-      // get pre-existing subtitles that should be displayed at timecode
-      subPreQueues = QsStructAlloc(mf);
-      GetSubtitlePreroll_compliant(mf, timecode, subPreQueues);
 
       if (flags & (MKVF_SEEK_TO_PREV_KEYFRAME | MKVF_SEEK_TO_PREV_KEYFRAME_STRICT)) {
         // we do this in two stages
